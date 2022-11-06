@@ -3,7 +3,7 @@ locals {
 }
 
 resource "aws_elb" "web-elb" {
-  name = var.name
+  name = "PythonAPP-elb"
   availability_zones = local.availability_zones
 
   listener {
@@ -24,7 +24,7 @@ resource "aws_elb" "web-elb" {
 
 resource "aws_autoscaling_group" "web-asg" {
   availability_zones   = local.availability_zones
-  name                 = "PythonAPP-ASG"
+  name                 = "PythonAPP-asg"
   max_size             = var.asg_max
   min_size             = var.asg_min
   desired_capacity     = var.asg_desired
@@ -45,17 +45,15 @@ resource "aws_launch_configuration" "web-lc" {
   image_id      = var.ami[var.aws_region]
   instance_type = var.instance_type
 
-  # Security group
-  security_groups = [aws_security_group.default.id]
+
+  security_groups = [aws_security_group.web_server.id]
   user_data       = file("userdata.sh")
   key_name        = var.key_name
 }
 
-# Our default security group to access
 # the instances over SSH and HTTP
-resource "aws_security_group" "default" {
-  name        = "terraform_example_sg"
-  description = "Used in the terraform"
+resource "aws_security_group" "web_server.id" {
+  name        = "web_server_sg"
 
   # SSH access from anywhere
   ingress {

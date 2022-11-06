@@ -1,5 +1,5 @@
 output "security_group" {
-  value = aws_security_group.default.id
+  value = aws_security_group.web_server.id
 }
 
 output "launch_configuration" {
