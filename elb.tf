@@ -4,6 +4,7 @@ locals {
 
 resource "aws_elb" "web-elb" {
   name = "PythonAPP-elb"
+  security_groups = [aws_security_group.elb-sg.id]
   availability_zones = local.availability_zones
 
   listener {
@@ -46,36 +47,7 @@ resource "aws_launch_configuration" "web-lc" {
   instance_type = var.instance_type
 
 
-  security_groups = [aws_security_group.web_server.id]
+  security_groups = [aws_security_group.webserver-sg.id]
   user_data       = file("userdata.sh")
   key_name        = var.key_name
-}
-
-# the instances over SSH and HTTP
-resource "aws_security_group" "web_server.id" {
-  name        = "web_server_sg"
-
-  # SSH access from anywhere
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # HTTP access from anywhere
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # outbound internet access
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }

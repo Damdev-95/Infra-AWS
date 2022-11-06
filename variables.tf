@@ -3,9 +3,6 @@ variable "aws_region" {
   description = "The AWS region to create things in."
 }
 
-variable "project" {
-  description = "Project tag."
-}
 
 variable "vpc_cidr" {
   type        = string
@@ -16,21 +13,13 @@ variable "subnet_id" {
   description = "The VPC Subnet ID to launch in."
 }
 
-variable "allowed_hosts" {
-  description = "CIDR blocks of trusted networks"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
-}
 
 
-variable "internal_networks" {
-  type        = list(string)
-  description = "Internal network CIDR blocks."
-}
+
 
 
 variable "availability_zones" {
-  default     = "us-east-1b,us-east-1c,us-east-1d,us-east-1e"
+  default     = "us-east-1a,us-east-1b,us-east-1c"
   description = "List of availability zones"
 }
 
@@ -48,17 +37,17 @@ variable "instance_type" {
 
 variable "asg_min" {
   description = "Min numbers of servers in ASG"
-  default     = "2"
+  default     = "1"
 }
 
 variable "asg_max" {
   description = "Max numbers of servers in ASG"
-  default     = "3"
+  default     = "2"
 }
 
 variable "asg_desired" {
   description = "Desired numbers of servers in ASG"
-  default     = "2"
+  default     = "1"
 }
 
 variable "enable_dns_support" {
