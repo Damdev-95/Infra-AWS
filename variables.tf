@@ -1,4 +1,4 @@
-variable "aws_region" {
+variable "region" {
   type = string
   description = "The AWS region to create things in."
 }
@@ -14,12 +14,8 @@ variable "subnet_id" {
 }
 
 
-
-
-
-
 variable "availability_zones" {
-  default     = "us-east-1a,us-east-1b,us-east-1c"
+  default     = "us-east-1a,us-east-1b"
   description = "List of availability zones"
 }
 

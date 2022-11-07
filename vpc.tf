@@ -1,6 +1,6 @@
 # Create VPC
 resource "aws_vpc" "PythonAPP" {
-  cidr_block = var.cidr_block
+  cidr_block = var.vpc_cidr
   enable_dns_hostnames = var.enable_dns_hostnames
   enable_dns_support = var.enable_dns_support
   tags = {
@@ -9,16 +9,28 @@ resource "aws_vpc" "PythonAPP" {
 }
 
 # Create Public subnet
-resource "aws_subnet" "public_subnet" {  
+resource "aws_subnet" "public_subnet1" {  
   vpc_id = aws_vpc.PythonAPP.id
-  cidr_block = "192.168.0.0/24"
+  cidr_block = "192.168.1.0/24"
   availability_zone = "us-east-1a"
   map_public_ip_on_launch = true
 
   tags = {
-    Name = format("%s-Public-Subnet", var.name)
+    Name = format("%s-Public-Subnet-1", var.name)
   }
 }
+
+resource "aws_subnet" "public_subnet2" {  
+  vpc_id = aws_vpc.PythonAPP.id
+  cidr_block = "192.168.3.0/24"
+  availability_zone = "us-east-1b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = format("%s-Public-Subnet-1", var.name)
+  }
+}
+
 
 # Create Private subnet
 resource "aws_subnet" "private_subnet" {
@@ -28,9 +40,21 @@ resource "aws_subnet" "private_subnet" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = format("%s-Private-Subnet", var.name)
+    Name = format("%s-Private-Subnet-1", var.name)
   }
 }
+
+resource "aws_subnet" "private_subnet2" {
+  vpc_id = aws_vpc.PythonAPP.id
+  cidr_block = "192.168.4.0/24"
+  availability_zone = "us-east-1b"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = format("%s-Private-Subnet-2", var.name)
+  }
+}
+
 
 # Create Internet gateway
 resource "aws_internet_gateway" "igw" {
@@ -55,7 +79,7 @@ resource "aws_eip" "nat_eip" {
 # create NAT gateway 
 resource "aws_nat_gateway" "natgw" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet.id
+  subnet_id     = aws_subnet.public_subnet1.id
   depends_on    = [aws_internet_gateway.igw]
 
   tags = {
@@ -82,7 +106,7 @@ resource "aws_route" "private-rtb-route" {
 
 # associate private subnets to the private route table
 resource "aws_route_table_association" "private-subnets-assoc" {
-  subnet_id      = aws_subnet.private_subnet.id
+  subnet_id      = [aws_subnet.private_subnet1.id, aws_subnet.private_subnet2.id]
   route_table_id = aws_route_table.private-rtb.id
 }
 
@@ -106,6 +130,6 @@ resource "aws_route" "public-rtb-route" {
 
 # associate all public subnets to the public route table
 resource "aws_route_table_association" "public-subnets-assoc" {
-  subnet_id      = aws_subnet.public_subnet.id
+  subnet_id      = [aws_subnet.public1_subnet.id, aws_subnet.public_subnet2.id]
   route_table_id = aws_route_table.public-rtb.id
 }
