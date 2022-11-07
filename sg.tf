@@ -72,10 +72,19 @@ resource "aws_security_group" "webserver-sg" {
 
 }
 
-resource "aws_security_group_rule" "inbound-web-https" {
+resource "aws_security_group_rule" "inbound-web-http" {
   type                     = "ingress"
-  from_port                = 80, 20000
-  to_port                  = 80, 2000
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.elb-sg.id
+  security_group_id        = aws_security_group.webserver-sg.id
+}
+
+resource "aws_security_group_rule" "inbound-app-http" {
+  type                     = "ingress"
+  from_port                = 2000
+  to_port                  = 2000
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.elb-sg.id
   security_group_id        = aws_security_group.webserver-sg.id
